@@ -1,40 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { AnimationProject, TextSegment } from '@/types'
-
-interface APIConfig {
-  textToPrompt: {
-    provider: 'openai' | 'anthropic' | 'custom'
-    apiKey: string
-    endpoint: string
-    model: string
-  }
-  imageGeneration: {
-    provider: 'stable-diffusion' | 'midjourney' | 'custom'
-    apiKey: string
-    endpoint: string
-    model: string
-  }
-  textToSpeech: {
-    provider: 'openai' | 'azure' | 'google' | 'elevenlabs' | 'custom'
-    apiKey: string
-    endpoint: string
-    model: string
-    voice: string
-    speed: number
-    pitch: number
-    volume: number
-  }
-}
-
-interface ProjectSettings {
-  imageWidth: number
-  imageHeight: number
-  imageCount: number
-  useImageToImage: boolean
-  imageToImageStrength: number
-  enableSubtitles: boolean
-  defaultSubtitleStyle: any
-}
+import { AnimationProject, TextSegment, APIConfig, ProjectSettings } from '@/types'
 
 interface AppContextType {
   project: AnimationProject | null

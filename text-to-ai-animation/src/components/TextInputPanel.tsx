@@ -65,7 +65,7 @@ export function TextInputPanel({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <Dialog.Root open onOpenChange={onClose}>
+    <Dialog.Root defaultOpen onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50" />
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg shadow-lg w-full max-w-2xl p-6">

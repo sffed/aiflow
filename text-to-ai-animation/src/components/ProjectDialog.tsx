@@ -92,7 +92,7 @@ export function ProjectDialog({ onClose }: ProjectDialogProps) {
   }
 
   return (
-    <Dialog.Root open onOpenChange={onClose}>
+    <Dialog.Root defaultOpen onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50" />
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-auto p-6">
