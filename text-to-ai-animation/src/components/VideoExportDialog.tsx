@@ -7,10 +7,11 @@ import { TextSegment, VideoOptions } from '@/types'
 
 interface VideoExportDialogProps {
   segments: TextSegment[]
+  isOpen: boolean
   onClose: () => void
 }
 
-export function VideoExportDialog({ segments, onClose }: VideoExportDialogProps) {
+export function VideoExportDialog({ segments, isOpen, onClose }: VideoExportDialogProps) {
   const [isExporting, setIsExporting] = useState(false)
   const [progress, setProgress] = useState(0)
   const [videoOptions, setVideoOptions] = useState<VideoOptions>({
@@ -28,7 +29,7 @@ export function VideoExportDialog({ segments, onClose }: VideoExportDialogProps)
 
   if (completedSegments.length === 0) {
     return (
-      <Dialog.Root defaultOpen onOpenChange={onClose}>
+      <Dialog.Root open={isOpen} onOpenChange={onClose}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/50" />
           <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg shadow-lg w-full max-w-md p-6">
@@ -172,7 +173,7 @@ export function VideoExportDialog({ segments, onClose }: VideoExportDialogProps)
   }
 
   return (
-    <Dialog.Root defaultOpen onOpenChange={onClose}>
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50" />
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg shadow-lg w-full max-w-2xl p-6">

@@ -11,7 +11,7 @@ export function MainLayout() {
       <Sidebar onOpenAPIConfig={() => setShowAPIConfig(true)} />
       <MainContent />
       {showAPIConfig && (
-        <APIConfigDialog onClose={() => setShowAPIConfig(false)} />
+        <APIConfigDialog onClose={() => setShowAPIConfig(false)} isOpen={showAPIConfig} />
       )}
     </div>
   )

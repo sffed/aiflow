@@ -76,6 +76,7 @@ export function Timeline() {
       {showExportDialog && (
         <VideoExportDialog
           segments={segments}
+          isOpen={showExportDialog}
           onClose={() => setShowExportDialog(false)}
         />
       )}

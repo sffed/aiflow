@@ -6,10 +6,11 @@ import { TextSegment } from '@/types'
 
 interface AnimationPreviewProps {
   segments: TextSegment[]
+  isOpen: boolean
   onClose: () => void
 }
 
-export function AnimationPreview({ segments, onClose }: AnimationPreviewProps) {
+export function AnimationPreview({ segments, isOpen, onClose }: AnimationPreviewProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
@@ -92,7 +93,7 @@ export function AnimationPreview({ segments, onClose }: AnimationPreviewProps) {
 
   if (completedSegments.length === 0) {
     return (
-      <Dialog.Root defaultOpen onOpenChange={onClose}>
+      <Dialog.Root open={isOpen} onOpenChange={onClose}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/90" />
           <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
@@ -105,7 +106,7 @@ export function AnimationPreview({ segments, onClose }: AnimationPreviewProps) {
   }
 
   return (
-    <Dialog.Root defaultOpen onOpenChange={onClose}>
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/95" />
         <Dialog.Content className="fixed inset-0 flex items-center justify-center p-4">
@@ -135,12 +136,11 @@ export function AnimationPreview({ segments, onClose }: AnimationPreviewProps) {
                     top: currentSegment.subtitle.position === 'top' ? '10%' :
                         currentSegment.subtitle.position === 'center' ? '50%' : 'auto',
                     bottom: currentSegment.subtitle.position === 'bottom' ? '10%' : 'auto',
-                    transform: currentSegment.subtitle.position === 'center' ? 'translateY(-50%)' : 'none',
+                    transform: currentSegment.subtitle.position === 'center' ? 'translate(-50%, -50%)' : 'translateX(-50%)',
                     fontSize: `${currentSegment.subtitle.fontSize}px`,
                     color: currentSegment.subtitle.color,
                     backgroundColor: currentSegment.subtitle.background ? 'rgba(0, 0, 0, 0.7)' : 'transparent',
                     left: '50%',
-                    transform: currentSegment.subtitle.position === 'center' ? 'translate(-50%, -50%)' : 'translateX(-50%)',
                     textAlign: 'center',
                     maxWidth: '80%'
                   }}

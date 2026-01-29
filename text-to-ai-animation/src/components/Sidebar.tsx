@@ -84,12 +84,13 @@ export function Sidebar({ onOpenAPIConfig }: SidebarProps) {
       {showPreview && (
         <AnimationPreview
           segments={segments}
+          isOpen={showPreview}
           onClose={() => setShowPreview(false)}
         />
       )}
 
       {showProjectDialog && (
-        <ProjectDialog onClose={() => setShowProjectDialog(false)} />
+        <ProjectDialog onClose={() => setShowProjectDialog(false)} isOpen={showProjectDialog} />
       )}
     </aside>
   )

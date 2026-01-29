@@ -2,20 +2,25 @@ import React, { useState, useRef } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { Button } from './ui/button'
 import { Label } from './ui/label'
+import { Input } from './ui/input'
 import { X, Upload, FileText } from 'lucide-react'
 import { useApp } from '@/store/AppContext'
 import { TextSegment } from '@/types'
 
-export function TextInputPanel({ onClose }: { onClose: () => void }) {
+export function TextInputPanel({ onClose, isOpen }: { onClose: () => void; isOpen: boolean }) {
   const { addSegments, setProject } = useApp()
   const [text, setText] = useState('')
   const [fileName, setFileName] = useState('')
+  const [projectName, setProjectName] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       setFileName(file.name)
+      if (!projectName) {
+        setProjectName(file.name.replace(/\.[^/.]+$/, ''))
+      }
       const reader = new FileReader()
       reader.onload = (e) => {
         const content = e.target?.result as string
@@ -26,7 +31,7 @@ export function TextInputPanel({ onClose }: { onClose: () => void }) {
   }
 
   const handleCreateProject = () => {
-    if (!text.trim()) return
+    if (!text.trim() || !projectName.trim()) return
 
     const lines = text.split('\n').filter(line => line.trim())
 
@@ -39,7 +44,7 @@ export function TextInputPanel({ onClose }: { onClose: () => void }) {
 
     const newProject = {
       id: `project_${Date.now()}`,
-      name: fileName || `新项目 ${new Date().toLocaleDateString()}`,
+      name: projectName.trim(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       segments: [],
@@ -53,7 +58,7 @@ export function TextInputPanel({ onClose }: { onClose: () => void }) {
         defaultSubtitleStyle: {
           fontSize: 24,
           color: '#ffffff',
-          position: 'bottom'
+          position: 'bottom' as const
         }
       },
       apiConfig: {}
@@ -65,7 +70,7 @@ export function TextInputPanel({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <Dialog.Root defaultOpen onOpenChange={onClose}>
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black/50" />
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg shadow-lg w-full max-w-2xl p-6">
@@ -80,6 +85,16 @@ export function TextInputPanel({ onClose }: { onClose: () => void }) {
 
           <div className="space-y-6">
             <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="project-name">项目名称 *</Label>
+                <Input
+                  id="project-name"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  placeholder="输入项目名称"
+                />
+              </div>
+
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -129,7 +144,7 @@ export function TextInputPanel({ onClose }: { onClose: () => void }) {
               <Button variant="outline" onClick={onClose}>
                 取消
               </Button>
-              <Button onClick={handleCreateProject} disabled={!text.trim()}>
+              <Button onClick={handleCreateProject} disabled={!text.trim() || !projectName.trim()}>
                 创建项目
               </Button>
             </div>

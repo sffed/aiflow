@@ -7,7 +7,7 @@ import { X } from 'lucide-react'
 import { useApp } from '@/store/AppContext'
 import { APIConfig } from '@/types'
 
-export function APIConfigDialog({ onClose }: { onClose: () => void }) {
+export function APIConfigDialog({ onClose, isOpen }: { onClose: () => void; isOpen: boolean }) {
   const { apiConfig, setApiConfig, settings, setSettings } = useApp()
   const [localConfig, setLocalConfig] = useState<APIConfig>(
     apiConfig || {
