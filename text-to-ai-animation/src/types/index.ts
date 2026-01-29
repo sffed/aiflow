@@ -33,7 +33,7 @@ export interface Subtitle {
 
 export interface APIConfig {
   textToPrompt: {
-    provider: 'openai' | 'anthropic' | 'custom'
+    provider: 'openai' | 'anthropic' | 'zhipu' | 'custom'
     apiKey: string
     endpoint: string
     model: string

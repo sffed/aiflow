@@ -12,10 +12,10 @@ export function APIConfigDialog({ onClose, isOpen }: { onClose: () => void; isOp
   const [localConfig, setLocalConfig] = useState<APIConfig>(
     apiConfig || {
       textToPrompt: {
-        provider: 'openai',
+        provider: 'zhipu',
         apiKey: '',
-        endpoint: 'https://api.openai.com/v1',
-        model: 'gpt-4'
+        endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+        model: 'glm-4.5'
       },
       imageGeneration: {
         provider: 'stable-diffusion',
@@ -78,6 +78,7 @@ export function APIConfigDialog({ onClose, isOpen }: { onClose: () => void; isOp
                   >
                     <option value="openai">OpenAI</option>
                     <option value="anthropic">Anthropic</option>
+                    <option value="zhipu">智谱AI</option>
                     <option value="custom">自定义</option>
                   </select>
                 </div>
