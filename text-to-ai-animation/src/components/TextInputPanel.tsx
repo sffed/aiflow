@@ -61,7 +61,7 @@ export function TextInputPanel({ onClose, isOpen }: { onClose: () => void; isOpe
           position: 'bottom' as const
         }
       },
-      apiConfig: {}
+      apiConfig: undefined
     }
 
     setProject(newProject)
