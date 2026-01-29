@@ -40,10 +40,10 @@ const defaultApiConfig: APIConfig = {
     model: 'gpt-4'
   },
   imageGeneration: {
-    provider: 'stable-diffusion',
+    provider: 'zhipu',
     apiKey: '',
-    endpoint: 'http://localhost:7860',
-    model: 'sd_xl_base_1.0'
+    endpoint: 'https://open.bigmodel.cn/api/paas/v4/images/generations',
+    model: 'glm-image'
   },
   textToSpeech: {
     provider: 'openai',
@@ -85,7 +85,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (project) {
       setSegments(project.segments)
       setSettings(project.settings)
-      setApiConfig(project.apiConfig)
+      if (project.apiConfig) {
+        setApiConfig(project.apiConfig)
+      }
     } else {
       setSegments([])
     }

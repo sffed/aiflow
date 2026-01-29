@@ -158,6 +158,7 @@ export function APIConfigDialog({ onClose, isOpen }: { onClose: () => void; isOp
                   >
                     <option value="stable-diffusion">Stable Diffusion</option>
                     <option value="midjourney">Midjourney</option>
+                    <option value="zhipu">智谱AI</option>
                     <option value="custom">自定义</option>
                   </select>
                 </div>

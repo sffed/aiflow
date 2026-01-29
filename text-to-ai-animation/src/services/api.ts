@@ -76,6 +76,8 @@ export class APIService {
         )
       } else if (imageGeneration.provider === 'midjourney') {
         result = await this.callMidjourney(imageGeneration, prompt, count)
+      } else if (imageGeneration.provider === 'zhipu') {
+        result = await this.callZhipuImage(imageGeneration, prompt, count, width, height)
       } else {
         result = await this.callCustomImageAPI(imageGeneration, prompt, count)
       }
@@ -83,7 +85,7 @@ export class APIService {
       console.log('[API] 图片生成成功', {
         provider: imageGeneration.provider,
         count: result.length,
-        images: result.map(img => ({ id: img.id, url: img.url.substring(0, 50) + '...' }))
+        images: result.map(img => ({ id: img.id, url: img.url?.substring(0, 50) + '...' || 'N/A' }))
       })
 
       return result
@@ -185,26 +187,18 @@ export class APIService {
         messages: [
           {
             role: 'system',
-            content: '你是一位专业的AI绘画提示词专家，擅长将文本转换为详细、生动、具有画面感的绘画提示词。'
-          },
-          {
-            role: 'user',
-            content: '请帮我为以下文本生成绘画提示词'
-          },
-          {
-            role: 'assistant',
-            content: '当然可以！请告诉我您想要生成绘画提示词的文本内容。'
+            content: '你是一位专业的AI绘画提示词生成专家。你的任务是将文本转换为简洁、准确、富有画面感的英文绘画提示词。只输出提示词本身，不要包含任何解释、分析或多个选项。'
           },
           {
             role: 'user',
             content: text
           }
         ],
-        thinking: {
-          type: 'enabled'
+        thinking: {	
+          type: 'enabled'	
         },
         max_tokens: 4096,
-        temperature: 0.6
+        temperature: 0.7
       })
     })
 
@@ -216,7 +210,7 @@ export class APIService {
 
     const data = await response.json()
     console.log('[API] 智谱AI 响应', { data })
-    return data.choices[0].message.content
+    return data.choices[0].message.content.trim()
   }
 
   private async callAnthropic(config: any, text: string): Promise<string> {
@@ -364,6 +358,60 @@ export class APIService {
       images.push({
         id: `img_${Date.now()}_${i}`,
         url: data.url
+      })
+    }
+
+    return images
+  }
+
+  private async callZhipuImage(
+    config: any,
+    prompt: string,
+    count: number,
+    width: number,
+    height: number
+  ): Promise<GeneratedImage[]> {
+    const endpoint = `${config.endpoint}`
+    console.log('[API] 调用智谱AI文生图', { endpoint, model: config.model, count, width, height })
+
+    const images: GeneratedImage[] = []
+
+    for (let i = 0; i < count; i++) {
+      console.log(`[API] 生成图片进度: ${i + 1}/${count}`)
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${config.apiKey}`
+        },
+        body: JSON.stringify({
+          model: config.model,
+          prompt: prompt,
+          size: `${width}x${height}`
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.text()
+        console.error('[API] 智谱AI文生图请求失败', { status: response.status, error })
+        throw new Error(`智谱AI Image API error: ${response.status} - ${error}`)
+      }
+
+      const data = await response.json()
+      console.log(`[API] 图片 ${i + 1} 生成成功`, { data })
+
+      const imageUrl = data.data?.[0]?.url || data.url || data.image?.url
+
+      if (!imageUrl) {
+        console.error(`[API] 图片 ${i + 1} URL解析失败`, { data })
+        throw new Error(`无法解析图片URL，返回数据: ${JSON.stringify(data)}`)
+      }
+
+      images.push({
+        id: `img_${Date.now()}_${i}`,
+        url: imageUrl,
+        data: imageUrl
       })
     }
 

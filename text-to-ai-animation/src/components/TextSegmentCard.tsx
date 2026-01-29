@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
@@ -12,7 +12,7 @@ interface TextSegmentProps {
   index: number
   isProcessing: boolean
   onGeneratePrompt: () => void
-  onGenerateImages: () => void
+  onGenerateImages: (imageCount?: number, imageWidth?: number, imageHeight?: number) => void
   onSelectImage: (imageIndex: number) => void
 }
 
@@ -26,8 +26,14 @@ export function TextSegmentCard({
 }: TextSegmentProps) {
   const [prompt, setPrompt] = useState(segment.prompt || '')
   const [audioProcessing, setAudioProcessing] = useState(false)
+  const [imageCount, setImageCount] = useState(4)
+  const [imageSize, setImageSize] = useState('1024x768')
   const audioRef = useRef<HTMLAudioElement>(null)
   const { apiConfig, updateSegment } = useApp()
+
+  useEffect(() => {
+    setPrompt(segment.prompt || '')
+  }, [segment.prompt])
 
   const handleGenerateAudio = async () => {
     if (!apiConfig) return
@@ -185,8 +191,32 @@ export function TextSegmentCard({
       </div>
 
       {prompt && segment.generatedImages.length === 0 && (
-        <div className="flex justify-end">
-          <Button onClick={onGenerateImages} disabled={isProcessing}>
+        <div className="flex gap-2 items-center flex-wrap">
+          <select
+            value={imageCount}
+            onChange={(e) => setImageCount(parseInt(e.target.value))}
+            className="px-3 py-2 border rounded-md"
+            disabled={isProcessing}
+          >
+            <option value={1}>1张</option>
+            <option value={2}>2张</option>
+            <option value={4}>4张</option>
+            <option value={8}>8张</option>
+          </select>
+          <select
+            value={imageSize}
+            onChange={(e) => setImageSize(e.target.value)}
+            className="px-3 py-2 border rounded-md"
+            disabled={isProcessing}
+          >
+            <option value="512x512">512x512</option>
+            <option value="768x768">768x768</option>
+            <option value="1024x768">1024x768</option>
+            <option value="1024x1024">1024x1024</option>
+            <option value="1280x720">1280x720</option>
+            <option value="1280x1280">1280x1280</option>
+          </select>
+          <Button onClick={() => onGenerateImages(imageCount, ...imageSize.split('x').map(Number))} disabled={isProcessing}>
             <Image className="mr-2 h-4 w-4" />
             {isProcessing ? '生成中...' : '生成图片'}
           </Button>

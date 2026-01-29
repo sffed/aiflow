@@ -54,7 +54,11 @@ export function MainContent() {
       )}
 
       {showTextInput && (
-        <TextInputPanel onClose={() => setShowTextInput(false)} isOpen={showTextInput} />
+        <TextInputPanel
+          onClose={() => setShowTextInput(false)}
+          isOpen={showTextInput}
+          mode={project ? 'add' : 'create'}
+        />
       )}
 
       {showProjectDialog && (

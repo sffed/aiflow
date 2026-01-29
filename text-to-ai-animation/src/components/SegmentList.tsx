@@ -39,7 +39,7 @@ export function SegmentList() {
     }
   }
 
-  const handleGenerateImages = async (segmentId: string) => {
+  const handleGenerateImages = async (segmentId: string, imageCount: number = 4, imageWidth: number = 1024, imageHeight: number = 768) => {
     if (!apiConfig) {
       console.error('[Segment] 生成图片失败: 未配置 API')
       setError('请先配置 API')
@@ -52,7 +52,7 @@ export function SegmentList() {
       return
     }
 
-    console.log('[Segment] 开始生成图片', { segmentId, prompt: segment.prompt })
+    console.log('[Segment] 开始生成图片', { segmentId, prompt: segment.prompt, count: imageCount, width: imageWidth, height: imageHeight })
     setProcessingId(segmentId)
     setError(null)
 
@@ -69,9 +69,9 @@ export function SegmentList() {
 
       const images = await apiService.generateImages(
         segment.prompt,
-        4,
-        1024,
-        768,
+        imageCount,
+        imageWidth,
+        imageHeight,
         referenceImage
       )
       updateSegment(segmentId, { generatedImages: images })
@@ -113,7 +113,7 @@ export function SegmentList() {
           index={index}
           isProcessing={processingId === segment.id}
           onGeneratePrompt={() => handleGeneratePrompt(segment.id)}
-          onGenerateImages={() => handleGenerateImages(segment.id)}
+          onGenerateImages={(count, width, height) => handleGenerateImages(segment.id, count, width, height)}
           onSelectImage={(imageIndex) => handleSelectImage(segment.id, imageIndex)}
         />
       ))}

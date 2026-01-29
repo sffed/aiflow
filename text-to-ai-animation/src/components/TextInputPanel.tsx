@@ -7,8 +7,8 @@ import { X, Upload, FileText } from 'lucide-react'
 import { useApp } from '@/store/AppContext'
 import { TextSegment } from '@/types'
 
-export function TextInputPanel({ onClose, isOpen }: { onClose: () => void; isOpen: boolean }) {
-  const { addSegments, setProject } = useApp()
+export function TextInputPanel({ onClose, isOpen, mode = 'create' }: { onClose: () => void; isOpen: boolean; mode?: 'create' | 'add' }) {
+  const { addSegments, setProject, project } = useApp()
   const [text, setText] = useState('')
   const [fileName, setFileName] = useState('')
   const [projectName, setProjectName] = useState('')
@@ -31,7 +31,9 @@ export function TextInputPanel({ onClose, isOpen }: { onClose: () => void; isOpe
   }
 
   const handleCreateProject = () => {
-    if (!text.trim() || !projectName.trim()) return
+    if (!text.trim()) return
+
+    if (mode === 'create' && !projectName.trim()) return
 
     const lines = text.split('\n').filter(line => line.trim())
 
@@ -42,30 +44,35 @@ export function TextInputPanel({ onClose, isOpen }: { onClose: () => void; isOpe
       duration: 3
     }))
 
-    const newProject = {
-      id: `project_${Date.now()}`,
-      name: projectName.trim(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      segments: [],
-      settings: {
-        imageWidth: 1024,
-        imageHeight: 768,
-        imageCount: 4,
-        useImageToImage: true,
-        imageToImageStrength: 0.5,
-        enableSubtitles: true,
-        defaultSubtitleStyle: {
-          fontSize: 24,
-          color: '#ffffff',
-          position: 'bottom' as const
-        }
-      },
-      apiConfig: undefined
+    if (mode === 'create') {
+      const newProject = {
+        id: `project_${Date.now()}`,
+        name: projectName.trim(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        segments: [],
+        settings: {
+          imageWidth: 1024,
+          imageHeight: 768,
+          imageCount: 4,
+          useImageToImage: true,
+          imageToImageStrength: 0.5,
+          enableSubtitles: true,
+          defaultSubtitleStyle: {
+            fontSize: 24,
+            color: '#ffffff',
+            position: 'bottom' as const
+          }
+        },
+        apiConfig: undefined
+      }
+
+      setProject(newProject)
+      addSegments(segments)
+    } else {
+      addSegments(segments)
     }
 
-    setProject(newProject)
-    addSegments(segments)
     onClose()
   }
 
@@ -75,7 +82,9 @@ export function TextInputPanel({ onClose, isOpen }: { onClose: () => void; isOpe
         <Dialog.Overlay className="fixed inset-0 bg-black/50" />
         <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-lg shadow-lg w-full max-w-2xl p-6">
           <div className="flex justify-between items-center mb-6">
-            <Dialog.Title className="text-xl font-bold">添加文本段落</Dialog.Title>
+            <Dialog.Title className="text-xl font-bold">
+              {mode === 'create' ? '创建新项目' : '添加文本段落'}
+            </Dialog.Title>
             <Dialog.Close asChild>
               <Button variant="ghost" size="icon">
                 <X className="h-4 w-4" />
@@ -84,7 +93,7 @@ export function TextInputPanel({ onClose, isOpen }: { onClose: () => void; isOpe
           </div>
 
           <div className="space-y-6">
-            <div className="space-y-4">
+            {mode === 'create' && (
               <div className="space-y-2">
                 <Label htmlFor="project-name">项目名称 *</Label>
                 <Input
@@ -94,7 +103,9 @@ export function TextInputPanel({ onClose, isOpen }: { onClose: () => void; isOpe
                   placeholder="输入项目名称"
                 />
               </div>
+            )}
 
+            <div className="space-y-4">
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -144,8 +155,8 @@ export function TextInputPanel({ onClose, isOpen }: { onClose: () => void; isOpe
               <Button variant="outline" onClick={onClose}>
                 取消
               </Button>
-              <Button onClick={handleCreateProject} disabled={!text.trim() || !projectName.trim()}>
-                创建项目
+              <Button onClick={handleCreateProject} disabled={!text.trim() || (mode === 'create' && !projectName.trim())}>
+                {mode === 'create' ? '创建项目' : '确定'}
               </Button>
             </div>
           </div>

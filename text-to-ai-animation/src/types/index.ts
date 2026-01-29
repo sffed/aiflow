@@ -39,7 +39,7 @@ export interface APIConfig {
     model: string
   }
   imageGeneration: {
-    provider: 'stable-diffusion' | 'midjourney' | 'custom'
+    provider: 'stable-diffusion' | 'midjourney' | 'zhipu' | 'custom'
     apiKey: string
     endpoint: string
     model: string
